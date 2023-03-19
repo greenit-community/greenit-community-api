@@ -4,30 +4,43 @@ class DiscordBotJob < ApplicationJob
   def perform(*args)
     bot = Discordrb::Bot.new(token: Rails.application.credentials.dig(:discord_bot, :token))
 
-    bot.message(start_with: '!trivial') do |event|
+    bot.message(start_with: "!trivial") do |event|
       question = Question.all.sample
 
-      question_with_answers = []
-      question_with_answers << "Bienvenue ! Ce Trivial Numérique Responsable est un jeu créé par les équipes d'OM Conseil, adapté en bot Discord pour la communauté Awesome Numérique Responsable."
-      question_with_answers << question.sentence.gsub("{", "**").gsub("}", "**")
-      question.answers.each_with_index do |answer, index|
-        question_with_answers << "#{Question::EMOJIS[index]} : #{answer}"
-      end
-      question_with_answers = question_with_answers.join("\n")
-
-      message = event.respond question_with_answers
-      question.answers.length.times do |index|
-        message.react Question::EMOJIS[index]
+      event.send_embed do |embed, view|
+        embed.title = question.sentence.gsub("{", "**").gsub("}", "**")
+        embed.description = "#{question.category_title}\nCe Trivial Numérique Responsable est un jeu créé par les équipes d'OM Conseil, adapté en bot Discord pour la communauté Awesome Numérique Responsable."
+        view.row do |row|
+          question.answers.each_with_index do |answer, index|
+            row.button(label: answer, style: :primary, emoji: Question::EMOJIS[index], custom_id: "trivial:#{question.id}:#{answer}")
+          end
+        end
       end
 
-      answer_index = question.answers.index(question.good)
-      answer_emoji = Question::EMOJIS[answer_index]
-
-      bot.add_await!(Discordrb::Events::ReactionAddEvent, message: message, emoji: answer_emoji, timeout: 15) do |_reaction_event|
-        event.respond "Bonne réponse ! #{question.good}"
+      bot.add_await!(Discordrb::Events::ButtonEvent, { custom_id: "trivial:#{question.id}:-1", timeout: 15 }) do |button_event|
       end
 
-      event.respond "Quelques compléments d'information : #{question.complements.gsub("{", "**").gsub("}", "**")}\n#{question.actions_title} : #{question.actions.join(", ").gsub("{", "**").gsub("}", "**")}.\nVous voulez rejouer ? `!trivial`"
+      event.send_embed do |embed, view|
+        embed.title = question.good
+        embed.description = "#{question.sentence.gsub("{", "**").gsub("}", "**")}\n#{question.good.gsub("{", "**").gsub("}", "**")}\n#{question.complements.gsub("{", "**").gsub("}", "**")}"
+      end
+
+      event.send_embed do |embed, view|
+        embed.title = question.actions_title
+        embed.description = question.actions.join(", ").gsub("{", "**").gsub("}", "**")
+      end
+    end
+
+    bot.button(custom_id: /^trivial:/) do |event|
+      question_id = event.interaction.button.custom_id.split(':')[1].to_i
+      answer = event.interaction.button.custom_id.split(':')[2]
+
+      question = Question.find(question_id)
+      if answer.eql?(question.good)
+        event.respond(content: "Bonne réponse #{event.user.username} :)")
+      else
+        event.respond(content: "Mauvaise réponse #{event.user.username} :(")
+      end
     end
 
     bot.run

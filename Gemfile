@@ -46,3 +46,6 @@ group :development do
   # gem "spring"
 end
 
+# Awesome Numérique Responsable API dependencies
+gem "discordrb", github: "shardlab/discordrb"
+gem "sidekiq"

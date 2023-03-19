@@ -7,4 +7,4 @@ test:
 production:
   adapter: redis
   url: <%= ENV.fetch("REDIS_URL") { "redis://localhost:6379/1" } %>
-  channel_prefix: awesome_numerique_responsable_api_production
+  channel_prefix: greenit_community_api_production

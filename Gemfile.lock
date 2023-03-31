@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/shardlab/discordrb.git
-  revision: dba1022677ab8f095709ba7670473be3bd45ff39
+  revision: 2011ac63da2c5dde1ff3bea06e1b471325128575
   specs:
     discordrb (3.4.2)
       discordrb-webhooks (~> 3.4.2)
@@ -83,10 +83,12 @@ GEM
       msgpack (~> 1.2)
     builder (3.2.4)
     concurrent-ruby (1.2.2)
-    connection_pool (2.3.0)
+    connection_pool (2.4.0)
     crass (1.0.6)
     date (3.3.3)
-    debug (1.7.1)
+    debug (1.7.2)
+      irb (>= 1.5.0)
+      reline (>= 0.3.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.12.0)
@@ -99,6 +101,9 @@ GEM
       domain_name (~> 0.5)
     i18n (1.12.0)
       concurrent-ruby (~> 1.0)
+    io-console (0.6.0)
+    irb (1.6.3)
+      reline (>= 0.3.0)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -114,7 +119,7 @@ GEM
     mime-types-data (3.2023.0218.1)
     mini_mime (1.1.2)
     minitest (5.18.0)
-    msgpack (1.6.1)
+    msgpack (1.7.0)
     net-imap (0.3.4)
       date
       net-protocol
@@ -166,8 +171,10 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.0.6)
-    redis-client (0.14.0)
+    redis-client (0.14.1)
       connection_pool
+    reline (0.3.3)
+      io-console (~> 0.5)
     rest-client (2.1.0)
       http-accept (>= 1.7.0, < 2.0)
       http-cookie (>= 1.0.2, < 2.0)
@@ -209,7 +216,7 @@ DEPENDENCIES
   tzinfo-data
 
 RUBY VERSION
-   ruby 3.2.1p31
+   ruby 3.2.2p53
 
 BUNDLED WITH
    2.4.6
